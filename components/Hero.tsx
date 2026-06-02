@@ -4,7 +4,7 @@ export default function Hero() {
   return (
     <section
       className="relative h-[90vh] flex items-center justify-center text-center text-white"
-      style={{
+      style={{ 
         backgroundImage:
           "url('/hero.jpg')",
         backgroundSize: "cover",
