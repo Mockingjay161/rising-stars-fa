@@ -5,10 +5,7 @@ export default function Hero() {
     <section
       className="relative h-[90vh] flex items-center justify-center text-center text-white"
       style={{ 
-        backgroundImage:
-          "url('/hero.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        background:"red"
       }}
     >
       {/* Dark overlay */}
