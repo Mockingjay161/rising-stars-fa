@@ -13,25 +13,31 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
+ async function handleLogin(e: React.FormEvent) {
+  e.preventDefault();
 
-    setLoading(true);
-    setMessage("");
+  setLoading(true);
+  setMessage("");
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
-    if (error) {
-      setMessage(error.message);
-    } else {
-      router.push("/admin");
-    }
-
+  if (error) {
+    setMessage(error.message);
     setLoading(false);
+    return;
   }
+
+  if (data.session) {
+    window.location.href = "/admin";
+  } else {
+    setMessage("Login failed: No session created");
+  }
+
+  setLoading(false);
+}
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-100">
