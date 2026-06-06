@@ -1,15 +1,15 @@
-import { supabase } from "@/lib/supabase";
+import { supabaseServer } from "@/lib/supabase-server";
 
 export default async function RegistrationsPage() {
-  const { data: players, error } = await supabase
+  const { data: players, error } = await supabaseServer
     .from("registrations")
     .select("*")
     .order("created_at", { ascending: false });
 
   if (error) {
     return (
-      <div className="p-6">
-        <h1 className="text-2xl font-bold text-red-600">
+      <div className="p-6 text-red-600">
+        <h1 className="text-xl font-bold">
           Error loading registrations
         </h1>
         <p>{error.message}</p>
@@ -24,7 +24,7 @@ export default async function RegistrationsPage() {
       </h1>
 
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse bg-white shadow rounded-lg">
+        <table className="w-full bg-white shadow rounded-lg">
 
           <thead className="bg-gray-100">
             <tr>
@@ -39,19 +39,17 @@ export default async function RegistrationsPage() {
           </thead>
 
           <tbody>
-            {players?.map((player) => (
-              <tr key={player.id} className="border-t">
-
-                <td className="p-3">{player.full_name}</td>
-                <td className="p-3">{player.age}</td>
-                <td className="p-3">{player.position}</td>
-                <td className="p-3">{player.phone}</td>
-                <td className="p-3">{player.email}</td>
-                <td className="p-3">{player.nationality}</td>
+            {players?.map((p) => (
+              <tr key={p.id} className="border-t">
+                <td className="p-3">{p.full_name}</td>
+                <td className="p-3">{p.age}</td>
+                <td className="p-3">{p.position}</td>
+                <td className="p-3">{p.phone}</td>
+                <td className="p-3">{p.email}</td>
+                <td className="p-3">{p.nationality}</td>
                 <td className="p-3">
-                  {new Date(player.created_at).toLocaleDateString()}
+                  {new Date(p.created_at).toLocaleDateString()}
                 </td>
-
               </tr>
             ))}
           </tbody>
