@@ -28,7 +28,6 @@ export default function LoginPage() {
       setMessage(error.message);
     } else {
       router.push("/admin");
-      router.refresh();
     }
 
     setLoading(false);

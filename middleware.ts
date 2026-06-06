@@ -14,13 +14,9 @@ export async function middleware(req: NextRequest) {
           return req.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            req.cookies.set(name, value)
-          );
-          res = NextResponse.next();
-          cookiesToSet.forEach(({ name, value, options }) =>
-            res.cookies.set(name, value, options)
-          );
+          cookiesToSet.forEach(({ name, value, options }) => {
+            res.cookies.set(name, value, options);
+          });
         },
       },
     }
@@ -31,14 +27,21 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getUser();
 
   const isAdminRoute = req.nextUrl.pathname.startsWith("/admin");
+  const isLoginPage = req.nextUrl.pathname === "/login";
 
+  // If NOT logged in and trying to access admin
   if (isAdminRoute && !user) {
     return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  // If logged in and trying to access login page
+  if (isLoginPage && user) {
+    return NextResponse.redirect(new URL("/admin", req.url));
   }
 
   return res;
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/login"],
 };
