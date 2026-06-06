@@ -1,7 +1,12 @@
-import { supabaseServer } from "@/lib/supabase-server";
+import { createClient } from "@supabase/supabase-js";
 
 export default async function RegistrationsPage() {
-  const { data: players, error } = await supabaseServer
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
+  const { data: players, error } = await supabase
     .from("registrations")
     .select("*")
     .order("created_at", { ascending: false });
@@ -9,9 +14,7 @@ export default async function RegistrationsPage() {
   if (error) {
     return (
       <div className="p-6 text-red-600">
-        <h1 className="text-xl font-bold">
-          Error loading registrations
-        </h1>
+        <h1 className="text-xl font-bold">Error loading registrations</h1>
         <p>{error.message}</p>
       </div>
     );
@@ -39,7 +42,7 @@ export default async function RegistrationsPage() {
           </thead>
 
           <tbody>
-            {players?.map((p) => (
+            {players?.map((p: any) => (
               <tr key={p.id} className="border-t">
                 <td className="p-3">{p.full_name}</td>
                 <td className="p-3">{p.age}</td>
@@ -48,7 +51,9 @@ export default async function RegistrationsPage() {
                 <td className="p-3">{p.email}</td>
                 <td className="p-3">{p.nationality}</td>
                 <td className="p-3">
-                  {new Date(p.created_at).toLocaleDateString()}
+                  {p.created_at
+                    ? new Date(p.created_at).toLocaleDateString()
+                    : ""}
                 </td>
               </tr>
             ))}
