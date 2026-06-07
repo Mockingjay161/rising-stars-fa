@@ -1,4 +1,5 @@
 import Link from "next/link";
+import LogoutButton from "@/components/LogoutButton";
 
 export default function AdminLayout({
   children,
@@ -53,6 +54,10 @@ export default function AdminLayout({
           </Link>
 
         </nav>
+
+        <div className="mt-auto p-4">
+          <LogoutButton />
+        </div>
       </aside>
 
       {/* Main Content */}

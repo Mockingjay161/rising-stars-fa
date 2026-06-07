@@ -1,10 +1,19 @@
-import { createClient } from "@supabase/supabase-js";
+import { redirect } from "next/navigation";
+import { createSupabaseServer } from "@/lib/supabase-server";
+
+export const dynamic = "force-dynamic";
 
 export default async function RegistrationsPage() {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabase = await createSupabaseServer();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // 🔐 HARD PROTECTION
+  if (!user) {
+    redirect("/login");
+  }
 
   const { data: players, error } = await supabase
     .from("registrations")
@@ -14,8 +23,7 @@ export default async function RegistrationsPage() {
   if (error) {
     return (
       <div className="p-6 text-red-600">
-        <h1 className="text-xl font-bold">Error loading registrations</h1>
-        <p>{error.message}</p>
+        Error: {error.message}
       </div>
     );
   }
@@ -28,16 +36,15 @@ export default async function RegistrationsPage() {
 
       <div className="overflow-x-auto">
         <table className="w-full bg-white shadow rounded-lg">
-
           <thead className="bg-gray-100">
             <tr>
-              <th className="p-3 text-left">Name</th>
-              <th className="p-3 text-left">Age</th>
-              <th className="p-3 text-left">Position</th>
-              <th className="p-3 text-left">Phone</th>
-              <th className="p-3 text-left">Email</th>
-              <th className="p-3 text-left">Nationality</th>
-              <th className="p-3 text-left">Date</th>
+              <th className="p-3">Name</th>
+              <th className="p-3">Age</th>
+              <th className="p-3">Position</th>
+              <th className="p-3">Phone</th>
+              <th className="p-3">Email</th>
+              <th className="p-3">Nationality</th>
+              <th className="p-3">Date</th>
             </tr>
           </thead>
 
@@ -58,7 +65,6 @@ export default async function RegistrationsPage() {
               </tr>
             ))}
           </tbody>
-
         </table>
       </div>
     </div>

@@ -31,10 +31,9 @@ export default function LoginPage() {
   }
 
   if (data.session) {
-    window.location.href = "/admin";
-  } else {
-    setMessage("Login failed: No session created");
-  }
+  window.location.href = "/admin";
+}
+  
 
   setLoading(false);
 }
