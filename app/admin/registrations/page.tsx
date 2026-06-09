@@ -3,8 +3,14 @@ import { createSupabaseServer } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
 
-export default async function RegistrationsPage() {
+export default async function RegistrationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ search?: string }>;
+}) {
   const supabase = await createSupabaseServer();
+  const params = await searchParams;
+  const search = params.search || "";
 
   const {
     data: { user },
@@ -15,24 +21,48 @@ export default async function RegistrationsPage() {
     redirect("/login");
   }
 
-  const { data: players, error } = await supabase
-    .from("registrations")
-    .select("*")
-    .order("created_at", { ascending: false });
+  let query = supabase
+  .from("registrations")
+  .select("*")
+  .order("created_at", { ascending: false });
 
-  if (error) {
-    return (
-      <div className="p-6 text-red-600">
-        Error: {error.message}
-      </div>
-    );
-  }
+if (search) {
+  query = query.or(
+    `full_name.ilike.%${search}%,phone.ilike.%${search}%,nationality.ilike.%${search}%,position.ilike.%${search}%`
+  );
+}
+
+const { data: players, error } = await query;
 
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-6">
         Player Registrations
       </h1>
+
+    <form method="GET" className="flex gap-2 mb-6 flex-wrap">
+      <input
+        type="text"
+        name="search"
+        defaultValue={search}
+        placeholder="Search by name, phone, nationality or position..."
+        className="w-full md:w-96 border rounded-lg p-3"
+      />
+
+      <button
+        type="submit"
+        className="bg-blue-600 text-white px-4 py-3 rounded-lg"
+      >
+        Search
+      </button>
+
+      <a
+        href="/admin/registrations"
+        className="bg-gray-500 text-white px-4 py-3 rounded-lg"
+      >
+        Clear
+      </a>
+    </form>
 
       <div className="overflow-x-auto">
         <table className="w-full bg-white shadow rounded-lg">
